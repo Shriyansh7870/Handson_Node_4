@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 
 function LogIn() {
+  const navi = useNavigate();
   const [data, setData] = useState({
     email: "",
     password: "",
   });
+
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -14,25 +18,29 @@ function LogIn() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(data);
     axios
-      .post("https://login-z4zi.onrender.com/api/login", data)
+      .post("https://login-ejkr.onrender.com/api/login", data)
       .then((res) => {
-        console.log(res.data.msg);
-        window.alert("Login successful!");
+        alert(res.data.msg);
+        setData({
+          email: "",
+          password: "",
+        });
+        localStorage.setItem("token", res.data.token);
+        navi("/Home");
       })
       .catch((error) => {
         console.error("Error:", error);
+        setError("Login failed. Please check your credentials.");
       });
-
-    setData({
-      email: "",
-      password: "",
-    });
   };
 
   return (
     <div className="center">
       <h1 id="heading">Log in</h1>
+      {error && <p className="error">{error}</p>}{" "}
+      {/* Display error message if there is an error */}
       <form className="loginform" onSubmit={handleSubmit}>
         <label className="word" htmlFor="email">
           Email:
@@ -44,6 +52,7 @@ function LogIn() {
           id="email"
           onChange={handleChange}
           value={data.email}
+          required
         />
         <br />
         <br />
@@ -58,15 +67,15 @@ function LogIn() {
           id="password"
           onChange={handleChange}
           value={data.password}
+          required
         />
         <br />
         <br />
         <button className="button" type="submit">
           Submit
-        </button>
+        </button>{" "}
       </form>
       <div className="or">OR</div>
-
       <NavLink to="/Register" className="nextpage">
         please Register First
       </NavLink>

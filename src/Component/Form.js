@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+
 function Register() {
+  const navi = useNavigate();
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -11,15 +13,23 @@ function Register() {
 
   const handleChange = (e) => {
     e.preventDefault();
+
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(data);
     axios
-      .post("https://login-z4zi.onrender.com/api/register", data)
-      .then((res) => console.log(res.data));
-    window.alert("Registration successful!");
+      .post("https://login-ejkr.onrender.com/api/register", data)
+      .then((res) => {
+        alert(res.data.msg);
+        setData(res.data);
+        localStorage.getItem("token", res.data.token);
+        navi("/");
+      })
+      .catch((err) => console.log(err));
+
     setData({
       name: "",
       email: "",
@@ -42,6 +52,7 @@ function Register() {
           id="name"
           onChange={handleChange}
           value={data.name}
+          required
         ></input>{" "}
         <br />
         <br />
@@ -55,6 +66,7 @@ function Register() {
           id="email"
           onChange={handleChange}
           value={data.email}
+          required
         />
         <br />
         <br />
@@ -69,6 +81,7 @@ function Register() {
           id="Password"
           onChange={handleChange}
           value={data.password}
+          required
         ></input>
         <br />
         <br />
@@ -83,6 +96,7 @@ function Register() {
           id="phoneNo"
           onChange={handleChange}
           value={data.phoneNo}
+          required
         ></input>{" "}
         <br />
         <br />
